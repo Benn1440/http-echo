@@ -36,6 +36,8 @@ func main() {
 		fmt.Fprintln(stdoutW, version.HumanVersion)
 		os.Exit(0)
 	}
+	//set env
+	os.Setenv("ECHO_TEXT", "hello world")
 
 	// Get text to echo from env var or flag
 	echoText := os.Getenv("ECHO_TEXT")

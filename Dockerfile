@@ -1,30 +1,71 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
-FROM gcr.io/distroless/static-debian12:nonroot as default
+# FROM alpine:3.19 AS build
 
-# TARGETOS and TARGETARCH are set automatically when --platform is provided.
-ARG TARGETOS
-ARG TARGETARCH
-ARG PRODUCT_VERSION
-ARG BIN_NAME
+# WORKDIR /app
 
-LABEL name="http-echo" \
-      maintainer="HashiCorp Consul Team <consul@hashicorp.com>" \
-      vendor="HashiCorp" \
-      version=$PRODUCT_VERSION \
-      release=$PRODUCT_VERSION \
-      summary="A test webserver that echos a response. You know, for kids." 
+# COPY go.mod .
+# COPY main.go .
 
-# COPY dist/$TARGETOS/$TARGETARCH/$BIN_NAME /
-COPY go.mod .
-COPY main.go .
+# RUN go build -o bin .
 
-EXPOSE 8080
+# EXPOSE 5678/tcp
 
-ENV ECHO_TEXT="hello-world"
+# ENV ECHO_TEXT="hello-world"
 
-ENTRYPOINT ["/http-echo"]
+# ENTRYPOINT ["/http-echo"]
+
+# FROM gcr.io/distroless/static-debian12:nonroot as builder
+
+# Set shell
+# SHELL ["/bin/bash", "-c"]
+
+# WORKDIR /build
+
+# Copy only go.mod initially to leverage Docker cache
+# COPY go.mod .
+# COPY main.go .
+
+# # Build the Go binary
+# RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o http-echo .
+
+# # Final stage
+# FROM gcr.io/distroless/static-debian12:nonroot as default
+
+# COPY --from=builder /build/http-echo /http-echo
+
+# EXPOSE 8080
+
+# ENV ECHO_TEXT="hello-world"
+
+# ENTRYPOINT ["/http-echo"]
+
+
+# FROM gcr.io/distroless/static-debian12:nonroot as default
+
+# # TARGETOS and TARGETARCH are set automatically when --platform is provided.
+# ARG TARGETOS
+# ARG TARGETARCH
+# ARG PRODUCT_VERSION
+# ARG BIN_NAME
+
+# LABEL name="http-echo" \
+#       maintainer="HashiCorp Consul Team <consul@hashicorp.com>" \
+#       vendor="HashiCorp" \
+#       version=$PRODUCT_VERSION \
+#       release=$PRODUCT_VERSION \
+#       summary="A test webserver that echos a response. You know, for kids." 
+
+# # COPY dist/$TARGETOS/$TARGETARCH/$BIN_NAME /
+# COPY go.mod .
+# COPY main.go .
+
+# EXPOSE 8080
+
+# ENV ECHO_TEXT="hello-world"
+
+# ENTRYPOINT ["/http-echo"]
 
 # FROM buildpack-deps:bookworm-scm AS build
 # FROM golang:1.10
@@ -67,25 +108,25 @@ ENTRYPOINT ["/http-echo"]
 
 
 
-# FROM gcr.io/distroless/static-debian12:nonroot as default
+FROM gcr.io/distroless/static-debian12:nonroot as default
 
-# # TARGETOS and TARGETARCH are set automatically when --platform is provided.
-# ARG TARGETOS
-# ARG TARGETARCH
-# ARG PRODUCT_VERSION
-# ARG BIN_NAME
+# TARGETOS and TARGETARCH are set automatically when --platform is provided.
+ARG TARGETOS
+ARG TARGETARCH
+ARG PRODUCT_VERSION
+ARG BIN_NAME
 
-# LABEL name="http-echo" \
-#       maintainer="HashiCorp Consul Team <consul@hashicorp.com>" \
-#       vendor="HashiCorp" \
-#       version=$PRODUCT_VERSION \
-#       release=$PRODUCT_VERSION \
-#       summary="A test webserver that echos a response. You know, for kids." 
+LABEL name="http-echo" \
+      maintainer="HashiCorp Consul Team <consul@hashicorp.com>" \
+      vendor="HashiCorp" \
+      version=$PRODUCT_VERSION \
+      release=$PRODUCT_VERSION \
+      summary="A test webserver that echos a response. You know, for kids." 
 
-# COPY dist/$TARGETOS/$TARGETARCH/$BIN_NAME /
+COPY dist/$TARGETOS/$TARGETARCH/$BIN_NAME /
 
-# EXPOSE 5678/tcp
+EXPOSE 5678/tcp
 
-# ENV ECHO_TEXT="hello-world"
+ENV ECHO_TEXT="hello-world"
 
-# ENTRYPOINT ["/http-echo"]
+ENTRYPOINT ["/http-echo"]
